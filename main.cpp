@@ -84,7 +84,7 @@ void checkData(char *arg1, char *arg2, char *arg3, Task &task)
 	switch(operation) {
 		case '+':
 		case '-':
-		case '*':
+		case 'x':
 		case '/':
 		case '^':
 		case '!':
@@ -127,7 +127,7 @@ void printHelp()
 	printf("Операции:\n");
 	printf("  +  сложение\n");
 	printf("  -  вычитание\n");
-	printf("  *  умножение\n");
+	printf("  x  умножение\n");
 	printf("  /  деление\n");
 	printf("  ^  возведение в степень\n");
 	printf("  !  факториал (требуется только одно число)\n");
