@@ -15,3 +15,5 @@ FetchContent_MakeAvailable(mathlib)
 add_executable(calculator main.cpp)
 
 target_link_libraries(calculator PRIVATE mathlib)
+
+install(TARGETS calculator DESTINATION bin)
