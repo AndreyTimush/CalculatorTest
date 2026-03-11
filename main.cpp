@@ -30,6 +30,7 @@ void runner(int argc, char *argv[])
 {
 	Task task;
 	parser(argc, argv, task);
+	if (!task.value1) return;
 	calculate(task);
 	print(task);
 }
@@ -38,15 +39,15 @@ void parser(int argc, char *argv[], Task &task)
 {
 	int opt;
 	while ((opt = getopt(argc, argv, "h")) != -1) {
-                switch(opt) {
-                        case 'h':
-                                printHelp();
-                                break;
-                        default:
-                                printf("Неожиданный код: %d\n", opt);
-                                break;
-                }
-        }
+    	switch(opt) {
+        	case 'h':
+            	printHelp();
+                return;
+            default:
+            	printf("Неожиданный код: %d\n", opt);
+                return;
+		}
+    }
 
 	if (argc - optind < 2) {
 		printf("Недостаточно аргументов\n");
@@ -157,7 +158,8 @@ void calculate(Task &task)
 
 void print(Task &task) 
 {
-	printf("%d %c %d = %f\n", task.value1, task.operation, task.value2, task.result);
+	if (!mathlib::isError)
+		printf("%d %c %d = %f\n", task.value1, task.operation, task.value2, task.result);
 }
 
 void printHelp()
