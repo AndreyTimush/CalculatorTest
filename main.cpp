@@ -1,6 +1,9 @@
 #include <cstdio>
 #include <unistd.h>
 #include <cstdlib>
+#include <cerrno>
+#include <climits>
+#include <cstring>
 #include "mathlib.h"
 
 struct Task
@@ -68,10 +71,21 @@ void parser(int argc, char *argv[], Task &task)
 
 void checkData(char *arg1, char *arg2, char *arg3, Task &task)
 {
+	errno = 0;
+	if ((strlen(arg1) > 10) || (arg3 !=nullptr && strlen(arg3) > 10)) { 
+        printf("Ошибка: число слишком большое\n");
+        return;
+    }
+
 	if (arg1[0] == '0') {
 		task.value1 = 0;
 	} else {
 		int a = atoi(arg1);
+		// printf("error = %s\n", errno);
+		if (errno == ERANGE || a > INT_MAX || a < INT_MIN) {
+			printf("Ошибка: число выходит за пределы допустимого диапазона\n");
+        	return;
+		}
 		if (a == 0) {
 			printf("Ошибка, надо ввести целое число\n");
 			return;
@@ -100,6 +114,10 @@ void checkData(char *arg1, char *arg2, char *arg3, Task &task)
 			task.value2 = 0;
 		} else {	
 			int b = atoi(arg3);
+			if (errno == ERANGE || b > INT_MAX || b < INT_MIN) {
+				printf("Ошибка: число выходит за пределы допустимого диапазона\n");
+        		return;
+			}	
 			if (b == 0) {
 				printf("Ошибка, надо ввести целое число");
 				return;
@@ -108,17 +126,10 @@ void checkData(char *arg1, char *arg2, char *arg3, Task &task)
 			}
 		}
 	}
-	// printf("Число 1: %d\n", task.value1);
-	// printf("Операция: %c\n", task.operation);
-	// printf("Число 2: %d\n", task.value2);
 }
 
 void calculate(Task &task)
 {
-	printf("%d\n", task.value1);
-	printf("%c\n", task.operation);
-	printf("%d\n", task.value2);
-	// int c = mathlib::sum(task.value1, task.value);
 	switch (task.operation) {
 		case '+': 
 			task.result = mathlib::sum(task.value1, task.value2);
@@ -142,13 +153,11 @@ void calculate(Task &task)
 			printf("Неверная операция");
 			break;
 	}
-
-	printf("res=%f\n", task.result);
 }
 
 void print(Task &task) 
 {
-	// printf("%d", task.value1, " %c", task.operation, " %d", task.value2, "=%f", task.result);
+	printf("%d %c %d = %f\n", task.value1, task.operation, task.value2, task.result);
 }
 
 void printHelp()
