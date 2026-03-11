@@ -28,7 +28,7 @@ bool errVal = false;
 int main(int argc, char *argv[]) { runner(argc, argv); }
 
 void runner(int argc, char *argv[]) {
-    Task task;
+    Task task{};
     parser(argc, argv, task);
     if (!task.value1) return;
     calculate(task);
