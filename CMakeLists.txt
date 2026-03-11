@@ -10,7 +10,20 @@ FetchContent_Declare(
 	GIT_TAG master
 )
 
+option(ENABLE_CLANG_TIDY "Enable clang-tidy analysis" ON)
+
 FetchContent_MakeAvailable(mathlib)
+
+if(ENABLE_CLANG_TIDY)
+    find_program(CLANG_TIDY_EXE clang-tidy)
+
+    if(CLANG_TIDY_EXE)
+        set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_EXE})
+        message(STATUS "clang-tidy enabled: ${CLANG_TIDY_EXE}")
+    else()
+        message(WARNING "clang-tidy not found - static analysis disabled")
+    endif()
+endif()
 
 add_executable(calculator main.cpp)
 
