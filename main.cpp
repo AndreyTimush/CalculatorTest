@@ -22,6 +22,8 @@ void calculate(Task &task);
 void print(Task &task);
 void printHelp();
 
+bool errVal = false;
+
 int main(int argc, char *argv[])
 {
 	runner(argc, argv);
@@ -66,6 +68,7 @@ void parser(int argc, char *argv[], Task &task)
 
 	if (argc - optind < 2) {
 		printf("Недостаточно аргументов\n");
+		errVal = true;
 		return;
 	}
 
@@ -78,6 +81,7 @@ void parser(int argc, char *argv[], Task &task)
 	} else if (argc - optind == 2){
 		str3 = nullptr;
 	} else {
+		errVal = true;
 		printf("Слишком много аргументов");
 		return;
 	}
@@ -89,6 +93,7 @@ void checkData(char *arg1, char *arg2, char *arg3, Task &task)
 {
 	errno = 0;
 	if ((strlen(arg1) > 10) || (arg3 !=nullptr && strlen(arg3) > 10)) { 
+		errVal = true;
         printf("Ошибка: число слишком большое\n");
         return;
     }
@@ -98,10 +103,12 @@ void checkData(char *arg1, char *arg2, char *arg3, Task &task)
 	} else {
 		int a = atoi(arg1);
 		if (errno == ERANGE || a > INT_MAX || a < INT_MIN) {
+			errVal = true;
 			printf("Ошибка: число выходит за пределы допустимого диапазона\n");
         	return;
 		}
 		if (a == 0) {
+			errVal = true;
 			printf("Ошибка, надо ввести целое число\n");
 			return;
 		} else {
@@ -120,8 +127,15 @@ void checkData(char *arg1, char *arg2, char *arg3, Task &task)
 			task.operation = operation;
 			break;
 		default:
+			errVal = true;
 			printf("Ошибка, введите валидную операцию");
 			return;
+	}
+
+	if (task.value1 < 0 && task.operation == '!') {
+		errVal = true;
+		printf("Факториал отрицательного числа не определен!\n");
+		return;
 	}
 
 	if (arg3 != nullptr) {
@@ -130,10 +144,12 @@ void checkData(char *arg1, char *arg2, char *arg3, Task &task)
 		} else {	
 			int b = atoi(arg3);
 			if (errno == ERANGE || b > INT_MAX || b < INT_MIN) {
+				errVal = true;
 				printf("Ошибка: число выходит за пределы допустимого диапазона\n");
         		return;
 			}	
 			if (b == 0) {
+				errVal = true;
 				printf("Ошибка, надо ввести целое число");
 				return;
 			} else {
@@ -165,6 +181,7 @@ void calculate(Task &task)
 			task.result = mathlib::factorial(task.value1);
 			break;
 		default:
+			errVal = true;	
 			printf("Неверная операция");
 			break;
 	}
@@ -172,7 +189,7 @@ void calculate(Task &task)
 
 void print(Task &task) 
 {
-	if (!mathlib::isError)
+	if (!mathlib::isError && !errVal)
 		printf("%d %c %d = %f\n", task.value1, task.operation, task.value2, task.result);
 }
 
