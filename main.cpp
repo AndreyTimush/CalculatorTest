@@ -28,7 +28,7 @@ void runner(int argc, char *argv[])
 	Task task;
 	parser(argc, argv, task);
 	calculate(task);
-//	print(task);
+	print(task);
 }
 
 void parser(int argc, char *argv[], Task &task) 
@@ -53,7 +53,7 @@ void parser(int argc, char *argv[], Task &task)
 	char *str1 = argv[optind];
 	char *str2 = argv[optind + 1];
 	char *str3 = nullptr;
-	printf("asdasd %d", argc - optind);
+
 	if (argc - optind == 3) {
 		str3 = argv[optind + 2];
 	} else if (argc - optind == 2){
@@ -108,14 +108,47 @@ void checkData(char *arg1, char *arg2, char *arg3, Task &task)
 			}
 		}
 	}
-	printf("Число 1: %d\n", task.value1);
-	printf("Операция: %c\n", task.operation);
-	printf("Число 2: %d\n", task.value2);
+	// printf("Число 1: %d\n", task.value1);
+	// printf("Операция: %c\n", task.operation);
+	// printf("Число 2: %d\n", task.value2);
 }
 
 void calculate(Task &task)
 {
+	printf("%d\n", task.value1);
+	printf("%c\n", task.operation);
+	printf("%d\n", task.value2);
+	// int c = mathlib::sum(task.value1, task.value);
+	switch (task.operation) {
+		case '+': 
+			task.result = mathlib::sum(task.value1, task.value2);
+			break;
+		case '-':
+			task.result = mathlib::subtraction(task.value1, task.value2);
+			break;
+		case 'x':
+			task.result = mathlib::multiply(task.value1, task.value2);
+			break;
+		case '/':
+			task.result = mathlib::division(task.value1, task.value2);
+			break;
+		case '^':
+			task.result = mathlib::pow(task.value1, task.value2);
+			break;
+		case '!':
+			task.result = mathlib::factorial(task.value1);
+			break;
+		default:
+			printf("Неверная операция");
+			break;
+	}
 
+	printf("res=%f\n", task.result);
+}
+
+void print(Task &task) 
+{
+	// printf("%d", task.value1, " %c", task.operation, " %d", task.value2, "=%f", task.result);
 }
 
 void printHelp()
