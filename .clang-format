@@ -1,0 +1,6 @@
+BasedOnStyle: Google
+IndentWidth: 4
+Language: Cpp
+AlignConsecutiveAssignments: Consecutive
+ColumnLimit: 100
+UseTab: Never
