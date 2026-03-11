@@ -5,6 +5,7 @@
 #include <climits>
 #include <cstring>
 #include "mathlib.h"
+#include <getopt.h>
 
 struct Task
 {
@@ -38,15 +39,27 @@ void runner(int argc, char *argv[])
 void parser(int argc, char *argv[], Task &task) 
 {
 	int opt;
-	while ((opt = getopt(argc, argv, "h")) != -1) {
-    	switch(opt) {
-        	case 'h':
-            	printHelp();
+
+	int c;
+    int option_index = 0;
+	static struct option long_options[] = {
+		{"help", no_argument, 0, 'h'},
+		{0, 0, 0, 0}
+	};
+
+	while (true) {
+        c = getopt_long(argc, argv, "h", long_options, &option_index);
+        
+        if (c == -1) break;  // Конец опций
+        
+        switch(c) {
+            case 'h':
+                printHelp();
                 return;
             default:
-            	printf("Неожиданный код: %d\n", opt);
+                printf("Неожиданный код: %d\n", c);
                 return;
-		}
+        }
     }
 
 	if (argc - optind < 2) {
@@ -82,7 +95,6 @@ void checkData(char *arg1, char *arg2, char *arg3, Task &task)
 		task.value1 = 0;
 	} else {
 		int a = atoi(arg1);
-		// printf("error = %s\n", errno);
 		if (errno == ERANGE || a > INT_MAX || a < INT_MIN) {
 			printf("Ошибка: число выходит за пределы допустимого диапазона\n");
         	return;
