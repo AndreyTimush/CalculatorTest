@@ -58,6 +58,8 @@ void parser(int argc, char *argv[], Task &task)
                 return;
             default:
                 printf("Неожиданный код: %d\n", c);
+				printf("Для отрицательных чисел используйте '--'\n");
+                printf("Пример: ./calculator -- -5 + 3\n");
                 return;
         }
     }
