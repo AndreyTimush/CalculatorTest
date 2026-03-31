@@ -2,23 +2,74 @@
 #include <iostream>
 #include "runner.h"
 #include "parser.h"
+#include "calculator.h"
+#include "checker.h"
 
 using json = nlohmann::json;
 
 void Runner::running(int argc, char *argv[])
 {
+	Data data;
 	Parser parser;
-	parser.parsing(argc, argv);
-	// std::cout << "argv[0] = " << argv[1];
+	Checker checker;
+	// Calculator calculator;
+	parser.parsing(data, argc, argv);
+	checker.checkData(data);
 }
 
-void Parser::parsing(int argc, char *argv[]) 
+void Parser::parsing(Data &data, int argc, char *argv[]) 
 {
-	// std::cout << "argv[1] = " << argv[1];
-	json jsonArgs = json::parse(argv[1]);
-	std::cout << jsonArgs["firstArgument"] << std::endl;
-	std::cout << jsonArgs["operation"] << std::endl;
-	std::cout << jsonArgs["secondArgument"] << std::endl;
+	json jsonArgs;
+	float firstArg = 0;
+	float secondArg = 0;
+	std::string operation;
+	try {
+		jsonArgs = json::parse(argv[1]);
+		firstArg = jsonArgs["firstArgument"];
+		operation = jsonArgs["operation"];
+		data.setFirstArg(firstArg);
+		data.setOperation(operation);
+		if (jsonArgs.contains("secondArgument")) {
+			secondArg = jsonArgs["secondArgument"];
+			data.setSecondArg(secondArg);
+		} else {
+			if (operation != "!") {
+				std::cout << "Введите правильную операцию или добавьте еще один аргумент" << std::endl;
+				return;
+			}
+		}
+	} catch (const json::exception& e) {
+    	std::cerr << "JSON Parse Error: " << e.what() << '\n';
+		return;
+	}
+}
+
+void Checker::checkData(Data &data)
+{
+	Calculator calculator;
+	std::string op = data.getOperation();
+	const char* opch = op.c_str();
+	if (op.length() == 1) {
+		switch (*opch) {
+			case '+':
+			case '-':
+			case '*':
+			case '/':
+			case '!':
+			case '^':
+				calculator.calculating(data);
+				break;
+			default:
+				std::cout << "Введите правильную операцию" << std::endl;
+		}
+	} else {
+		std::cout << "Неправильная операция" << std::endl;
+	}
+}
+
+void Calculator::calculating(Data &data)
+{
+	std::cout << data.getOperation();
 }
 
 // void runner(int argc, char *argv[]);

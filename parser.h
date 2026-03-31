@@ -1,7 +1,8 @@
 #pragma once
+#include "data.h"
 
 class Parser
 {
 public:
-	void parsing(int argc, char *argv[]);
+	void parsing(Data &data, int argc, char *argv[]);
 };
