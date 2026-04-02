@@ -4,7 +4,5 @@
 class Calculator
 {
 public: 
-    void calculating(Data &data) {
-        
-    };
+    void calculating(Data &data);
 };

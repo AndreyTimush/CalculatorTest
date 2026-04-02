@@ -2,14 +2,17 @@
 
 class Data
 {
-    float firstArg = 0;
-    std::string operation;
-    float secondArg = 0;
+    int firstArg = 0;
+    char operation;
+    int secondArg = 0;
+    float result = 0;
 public:
-    float getFirstArg() {return firstArg;};
-    std::string getOperation() {return operation;};
-    float getSecondArg() {return secondArg;};
-    void setFirstArg(float firstArg) {this->firstArg = firstArg;}
-    void setOperation(std::string operation) {this->operation = operation;}
-    void setSecondArg(float secondArg) {this->secondArg = secondArg;}
+    int getFirstArg() {return firstArg;};
+    char getOperation() {return operation;};
+    int getSecondArg() {return secondArg;};
+    float getResult() {return result;}
+    void setFirstArg(int firstArg) {this->firstArg = firstArg;}
+    void setOperation(char operation) {this->operation = operation;}
+    void setSecondArg(int secondArg) {this->secondArg = secondArg;}
+    void setResult(float res) {this->result = res;}
 };
