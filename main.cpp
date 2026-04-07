@@ -73,15 +73,6 @@ void Checker::checkData(Data &data)
 {
 	Calculator calculator;
 	char op = data.getOperation();
-	if (data.getFirstArg() > INT_MAX || data.getFirstArg() < INT_MIN) {
-		std::cout << "Выход числа за пределы диапазона\n";
-		return;
-	}
-
-	if (data.getSecondArg() > INT_MAX || data.getSecondArg() < INT_MIN) {
-		std::cout << "Выход числа за пределы диапазона\n";
-		return;
-	}
 
 	switch (op) {
 		case '+':
@@ -93,7 +84,8 @@ void Checker::checkData(Data &data)
 			calculator.calculating(data);
 			break;
 		default:
-			std::cout << "Введите правильную операцию" << std::endl;
+			throw std::runtime_error("Введите правильную операцию");
+			break;
 	}
 }
 
@@ -125,8 +117,7 @@ void Calculator::calculating(Data &data)
 				break;
 		}
 	} catch(const std::exception& e) {
-				std::cout << e.what() << std::endl;
-				return;
+				throw;
 	}
 	data.setResult(res);
 }

@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.2)
 project(calculator)
 
 include(FetchContent)
+enable_testing()
 
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER}")
 
@@ -26,7 +27,20 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(mathlib nlohmann_json googletest)
 
-add_executable(calculator main.cpp)
+add_library(calculator_core OBJECT main.cpp)
+target_compile_definitions(calculator_core PRIVATE main=calculator_entrypoint)
+target_include_directories(calculator_core PUBLIC
+    "${PROJECT_SOURCE_DIR}"
+)
+target_link_libraries(calculator_core PUBLIC mathlib nlohmann_json)
+
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/app_main.cpp"
+"int calculator_entrypoint(int argc, char** argv);\n"
+"int main(int argc, char** argv) { return calculator_entrypoint(argc, argv); }\n"
+)
+
+add_executable(calculator "${CMAKE_CURRENT_BINARY_DIR}/app_main.cpp")
+target_link_libraries(calculator PRIVATE calculator_core)
 
 target_include_directories(calculator PUBLIC
     "${PROJECT_SOURCE_DIR}" 
@@ -34,4 +48,17 @@ target_include_directories(calculator PUBLIC
 
 target_link_libraries(calculator PRIVATE mathlib nlohmann_json)
 
-install(TARGETS calculator DESTINATION bin)
+file(GLOB TEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.cpp")
+
+add_executable(calculator_tests ${TEST_SOURCES})
+
+target_include_directories(calculator_tests PUBLIC
+    "${PROJECT_SOURCE_DIR}"
+)
+
+target_link_libraries(calculator_tests PRIVATE
+    gtest
+    calculator_core
+)
+
+add_test(NAME calculator_tests COMMAND calculator_tests)
