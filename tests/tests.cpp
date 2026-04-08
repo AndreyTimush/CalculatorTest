@@ -96,13 +96,12 @@ TEST(CheckerTest, ValidOperationCalculatesResult)
     EXPECT_FLOAT_EQ(data.getResult(), 15.0f);
 }
 
-TEST(CheckerTest, InvalidOperationPrintsError)
+TEST(CheckerTest, InvalidOperationCheckerError)
 {
     Data data;
     data.setFirstArg(10);
     data.setOperation('?');
     data.setSecondArg(5);
-    data.setResult(0);
 
     Checker checker;
 
@@ -170,6 +169,18 @@ TEST(CalculatorTest, ValidMultiplicationResult)
     EXPECT_EQ(data.getResult(), 56);
 }
 
+TEST(CalculatorTest, InvalidMultiplicationResult)
+{
+    Data data;
+    data.setFirstArg(2147483647);
+    data.setOperation('*');
+    data.setSecondArg(8);
+    
+    Calculator calculator;
+    
+    EXPECT_THROW(calculator.calculating(data), std::runtime_error);
+}
+
 TEST(CalculatorTest, ValidDivisionResult)
 {
     Data data;
@@ -181,6 +192,18 @@ TEST(CalculatorTest, ValidDivisionResult)
     calculator.calculating(data);
 
     EXPECT_FLOAT_EQ(data.getResult(), 13.0f / 3.0f);
+}
+
+TEST(CalculatorTest, InvalidDivisionResult)
+{
+    Data data;
+    data.setFirstArg(10);
+    data.setOperation('/');
+    data.setSecondArg(0);
+
+    Calculator calculator;
+    
+    EXPECT_THROW(calculator.calculating(data), std::runtime_error);
 }
 
 TEST(CalculatorTest, ValidPowResult)
@@ -196,6 +219,18 @@ TEST(CalculatorTest, ValidPowResult)
     EXPECT_EQ(data.getResult(), 8);
 }
 
+TEST(CalculatorTest, InvalidPowResult)
+{
+    Data data;
+    data.setFirstArg(2147483647);
+    data.setOperation('^');
+    data.setSecondArg(3);
+    
+    Calculator calculator;
+
+    EXPECT_THROW(calculator.calculating(data), std::runtime_error);
+}
+
 TEST(CalculatorTest, ValidFactorialResult)
 {
     Data data;
@@ -206,4 +241,15 @@ TEST(CalculatorTest, ValidFactorialResult)
     calculator.calculating(data);
 
     EXPECT_EQ(data.getResult(), 24);
+}
+
+TEST(CalculatorTest, InvalidFactorialResult)
+{
+    Data data;
+    data.setFirstArg(13);
+    data.setOperation('!');
+    
+    Calculator calculator;
+
+    EXPECT_THROW(calculator.calculating(data), std::runtime_error);
 }
