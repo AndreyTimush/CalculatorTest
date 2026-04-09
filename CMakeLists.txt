@@ -22,17 +22,23 @@ FetchContent_Declare(
   googletest
   URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
 )
+
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG v1.13.0
+)
 # For Windows: Prevent overriding the parent project's compiler/linker settings
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
-FetchContent_MakeAvailable(mathlib nlohmann_json googletest)
+FetchContent_MakeAvailable(mathlib nlohmann_json googletest spdlog)
 
 add_library(calculator_core OBJECT main.cpp)
 target_compile_definitions(calculator_core PRIVATE main=calculator_entrypoint)
 target_include_directories(calculator_core PUBLIC
     "${PROJECT_SOURCE_DIR}"
 )
-target_link_libraries(calculator_core PUBLIC mathlib nlohmann_json)
+target_link_libraries(calculator_core PUBLIC mathlib nlohmann_json spdlog)
 
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/app_main.cpp"
 "int calculator_entrypoint(int argc, char** argv);\n"
@@ -46,7 +52,7 @@ target_include_directories(calculator PUBLIC
     "${PROJECT_SOURCE_DIR}" 
 )
 
-target_link_libraries(calculator PRIVATE mathlib nlohmann_json)
+target_link_libraries(calculator PRIVATE mathlib nlohmann_json spdlog)
 
 file(GLOB TEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.cpp")
 
