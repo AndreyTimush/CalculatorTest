@@ -1,4 +1,5 @@
 #include <nlohmann/json.hpp>
+#include <spdlog/spdlog.h>
 #include <iostream>
 #include <cstring>
 #include <cerrno>
@@ -12,17 +13,43 @@
 
 using json = nlohmann::json;
 
+class Logger
+{
+	public:
+		static Logger &getLogger() {
+			static Logger logger;
+			return logger;
+		}
+
+		void info(std::string msg) {
+			spdlog::info(msg);
+		}
+
+		void error(std::string msg) {
+			spdlog::error(msg);
+		}
+	private:
+		Logger() {}
+		~Logger() {}
+		Logger(const Logger&) = delete;
+		Logger &operator=(const Logger&) = delete;
+};
+
 void Runner::running(int argc, char *argv[])
 {
 	Data data;
 	Parser parser;
 	Checker checker;
 	Printer printer;
+	Logger &logger = Logger::getLogger();
+	logger.info("func running");
 	try {
 		parser.parsing(data, argc, argv);
 		checker.checkData(data);
 		printer.printing(data);
 	} catch (std::runtime_error &err) {
+		std::string msg = "Error! ";
+		logger.error(msg + err.what());
 		std::cout << "Error: " << err.what() << std::endl;
 		return;
 	}
@@ -31,6 +58,8 @@ void Runner::running(int argc, char *argv[])
 
 void Parser::parsing(Data &data, int argc, char *argv[]) 
 {
+	Logger &logger = Logger::getLogger();
+	logger.info("func parsing");
 	json jsonArgs;
 	long long firstArg = 0;
 	long long secondArg = 0;
@@ -61,7 +90,7 @@ void Parser::parsing(Data &data, int argc, char *argv[])
 			}
 		} else {
 			if (operation != '!') {
-				throw std::runtime_error("Введите правильную операцию или добавьте еще один аргумент");
+				throw std::runtime_error("Write correct operation or add second argument");
 			}
 		}
 	} catch (const json::exception& e) {
@@ -71,6 +100,8 @@ void Parser::parsing(Data &data, int argc, char *argv[])
 
 void Checker::checkData(Data &data)
 {
+	Logger &logger = Logger::getLogger();
+	logger.info("func checkData");
 	Calculator calculator;
 	char op = data.getOperation();
 
@@ -84,36 +115,44 @@ void Checker::checkData(Data &data)
 			calculator.calculating(data);
 			break;
 		default:
-			throw std::runtime_error("Введите правильную операцию");
+			throw std::runtime_error("Write correct operation");
 			break;
 	}
 }
 
 void Calculator::calculating(Data &data)
 {
+	Logger &logger = Logger::getLogger();
+	logger.info("func calculating");
 	float res = 0;
 	try {
 		switch (data.getOperation()) {
 			case '+': 
+				logger.info("func sum");
 				res = mathlib::sum(data.getFirstArg(), data.getSecondArg());
 				break;
 			case '-':
+				logger.info("func subtraction");
 				res = mathlib::subtraction(data.getFirstArg(), data.getSecondArg());
 				break;
 			case '*':
+				logger.info("func multiply");
 				res = mathlib::multiply(data.getFirstArg(), data.getSecondArg());
 				break;
 			case '/':
+				logger.info("func division");
 				res = mathlib::division(data.getFirstArg(), data.getSecondArg());
 				break;
 			case '^':
+				logger.info("func pow");
 				res = mathlib::pow(data.getFirstArg(), data.getSecondArg());
 				break;
 			case '!':
+				logger.info("func factorial");
 				res = mathlib::factorial(data.getFirstArg());
 				break;
 			default:
-				std::cout << "Неверная операция";
+				logger.error("Error! Wrong operation!");
 				break;
 		}
 	} catch(const std::exception& e) {
@@ -124,6 +163,8 @@ void Calculator::calculating(Data &data)
 
 void Printer::printing(Data &data)
 {
+	Logger &logger = Logger::getLogger();
+	logger.info("func printing");
 	if (data.getOperation() != '!')
 		std::cout << data.getFirstArg() << " " << data.getOperation() << " " << data.getSecondArg() << " = " << data.getResult() << std::endl;
 	else {
@@ -133,6 +174,8 @@ void Printer::printing(Data &data)
 
 void Printer::printHelp()
 {
+	Logger &logger = Logger::getLogger();
+	logger.info("func printHelp(helper for working)");
 	printf("Калькулятор v1.0\n");
 	printf("Использование: calculator [опции] [число1] [операция] [число2]\n");
 	printf("Опции:\n");
@@ -151,6 +194,8 @@ void Printer::printHelp()
 
 int main(int argc, char *argv[])
 {
+	Logger &logger = Logger::getLogger();
+	logger.info("Start!");
 	Printer printer;
 	if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
 			printer.printHelp();
