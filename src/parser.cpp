@@ -3,6 +3,8 @@
 #include "parser.h"
 #include "logger.h"
 #include <nlohmann/json.hpp>
+#include <getopt.h>
+#include "printer.h"
 
 using json = nlohmann::json;
 
@@ -10,6 +12,31 @@ Parser::Parser(){}
 
 void Parser::parsing(Data &data, int argc, char *argv[]) 
 {
+	int opt;
+
+    int c;
+    int option_index = 0;
+    static struct option long_options[] = {{"help", no_argument, 0, 'h'}, {0, 0, 0, 0}};
+	Printer printer;
+
+	
+    while (true) {
+        c = getopt_long(argc, argv, "h", long_options, &option_index);
+
+        if (c == -1) break;  // Конец опций
+
+        switch (c) {
+            case 'h':
+                printer.printHelp();
+                return;
+            default:
+                printf("Неожиданный код: %d\n", c);
+                printf("Для отрицательных чисел используйте '--'\n");
+                printf("Пример: ./calculator -- -5 + 3\n");
+                return;
+        }
+    }
+
 	Logger &logger = Logger::getLogger();
 	logger.info("func parsing");
 	json jsonArgs;
@@ -24,6 +51,7 @@ void Parser::parsing(Data &data, int argc, char *argv[])
 		} else {
 			data.setFirstArg(static_cast<int>(firstArg));
 		}
+		
 		
 		std::string str = jsonArgs["operation"];
 		if (str.length() != 1) {

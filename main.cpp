@@ -12,17 +12,14 @@ using json = nlohmann::json;
 
 int main(int argc, char *argv[])
 {
-	Runner runner;
-	runner.running(argc, argv);
-	// Logger &logger = Logger::getLogger();
-	// logger.info("Start!");
-	// Printer printer;
-	// if (strcmp(argv[1], "-h") == 0 || strcmp(argv[1], "--help") == 0) {
-	// 		printer.printHelp();
-	// 		return 0;
-	// }
-	// Runner runner;
-	// runner.running(argc, argv);
+	try {
+		Runner runner;
+		runner.running(argc, argv);
+	} catch(std::exception &e) {
+		std::string msg = "Error! ";
+		Logger &logger = Logger::getLogger();
+		logger.error(msg + e.what());
+	}
 	return 0;
 }
 

@@ -4,14 +4,17 @@
 #include "checker.h"
 #include "printer.h"
 #include "logger.h"
+#include "calculator.h"
 
 class Runner
 {
+    
     Data data;
     Parser parser;
     Checker checker;
     Printer printer;
-    Logger logger;
+    Calculator calculator;
+    Logger &logger = Logger::getLogger();
     public:
         Runner();
         ~Runner();

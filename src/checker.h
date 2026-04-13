@@ -5,5 +5,5 @@ class Checker
 {
 public: 
     Checker();
-    void checkData(Data &data);
+    bool checkData(Data &data);
 };
