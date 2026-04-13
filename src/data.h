@@ -7,6 +7,7 @@ class Data
     int secondArg = 0;
     float result = 0;
 public:
+    Data();
     int getFirstArg() {return firstArg;};
     char getOperation() {return operation;};
     int getSecondArg() {return secondArg;};

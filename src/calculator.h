@@ -4,5 +4,6 @@
 class Calculator
 {
 public: 
+    Calculator();
     void calculating(Data &data);
 };

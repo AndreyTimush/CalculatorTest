@@ -33,10 +33,17 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 FetchContent_MakeAvailable(mathlib nlohmann_json googletest spdlog)
 
-add_library(calculator_core OBJECT main.cpp)
+add_library(calculator_core OBJECT main.cpp
+    src/calculator.cpp
+    src/checker.cpp
+    src/data.cpp
+    src/logger.cpp
+    src/parser.cpp
+    src/printer.cpp
+    src/runner.cpp)
 target_compile_definitions(calculator_core PRIVATE main=calculator_entrypoint)
 target_include_directories(calculator_core PUBLIC
-    "${PROJECT_SOURCE_DIR}"
+    "${PROJECT_SOURCE_DIR}/src"
 )
 target_link_libraries(calculator_core PUBLIC mathlib nlohmann_json spdlog)
 
