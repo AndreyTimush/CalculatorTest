@@ -2,8 +2,6 @@
 #include "mathlib.h"
 #include "logger.h"
 
-Calculator::Calculator(){}
-
 void Calculator::calculating(Data &data)
 {
 	Logger &logger = Logger::getLogger();

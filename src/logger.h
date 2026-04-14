@@ -4,8 +4,10 @@
 
 class Logger {
     public:
-        Logger();
-		~Logger();
+        Logger() = default;
+        Logger(Logger&& other) noexcept = default;
+        Logger& operator=(Logger&& other) noexcept = default;
+		~Logger() = default;
         static Logger &getLogger() {
             static Logger logger;
 	        return logger;

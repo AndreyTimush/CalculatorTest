@@ -8,7 +8,6 @@
 
 class Runner
 {
-    
     Data data;
     Parser parser;
     Checker checker;
@@ -17,6 +16,10 @@ class Runner
     Logger &logger = Logger::getLogger();
     public:
         Runner();
-        ~Runner();
+        Runner(const Runner& other); 
+        Runner& operator=(const Runner& other);
+        Runner(Runner&& other) noexcept;
+        Runner& operator=(Runner&& other) noexcept;
+        ~Runner() = default;
         void running(int argc, char *argv[]);
 };

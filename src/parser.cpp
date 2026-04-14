@@ -8,8 +8,6 @@
 
 using json = nlohmann::json;
 
-Parser::Parser(){}
-
 void Parser::parsing(Data &data, int argc, char *argv[]) 
 {
 	int opt;

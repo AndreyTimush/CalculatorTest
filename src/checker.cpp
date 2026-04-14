@@ -1,8 +1,6 @@
 #include "checker.h"
 #include "logger.h"
 
-Checker::Checker(){}
-
 bool Checker::checkData(Data &data)
 {
 	Logger &logger = Logger::getLogger();
