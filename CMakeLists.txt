@@ -3,6 +3,9 @@ cmake_minimum_required(VERSION 3.2)
 project(calculator)
 
 include(FetchContent)
+enable_testing()
+
+message(STATUS "Compiler: ${CMAKE_CXX_COMPILER}")
 
 FetchContent_Declare(
 	mathlib
@@ -10,37 +13,65 @@ FetchContent_Declare(
 	GIT_TAG master
 )
 
-option(ENABLE_CLANG_TIDY "Enable clang-tidy analysis" ON)
+FetchContent_Declare(
+	nlohmann_json
+	URL https://github.com/nlohmann/json/archive/refs/tags/v3.11.2.tar.gz
+)
 
-FetchContent_MakeAvailable(mathlib)
+FetchContent_Declare(
+  googletest
+  URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip
+)
 
-if(ENABLE_CLANG_TIDY)
-    find_program(CLANG_TIDY_EXE clang-tidy)
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY https://github.com/gabime/spdlog.git
+    GIT_TAG v1.13.0
+)
+# For Windows: Prevent overriding the parent project's compiler/linker settings
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
-    if(CLANG_TIDY_EXE)
-        set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_EXE})
-        message(STATUS "clang-tidy enabled: ${CLANG_TIDY_EXE}")
-    else()
-        message(WARNING "clang-tidy not found - static analysis disabled")
-    endif()
-endif()
+FetchContent_MakeAvailable(mathlib nlohmann_json googletest spdlog)
 
-add_executable(calculator main.cpp)
+add_library(calculator_core OBJECT main.cpp
+    src/calculator.cpp
+    src/checker.cpp
+    src/data.cpp
+    src/logger.cpp
+    src/parser.cpp
+    src/printer.cpp
+    src/runner.cpp)
+target_compile_definitions(calculator_core PRIVATE main=calculator_entrypoint)
+target_include_directories(calculator_core PUBLIC
+    "${PROJECT_SOURCE_DIR}/src"
+)
+target_link_libraries(calculator_core PUBLIC mathlib nlohmann_json spdlog)
 
-target_link_libraries(calculator PRIVATE mathlib)
+file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/app_main.cpp"
+"int calculator_entrypoint(int argc, char** argv);\n"
+"int main(int argc, char** argv) { return calculator_entrypoint(argc, argv); }\n"
+)
 
-install(TARGETS calculator DESTINATION bin)
+add_executable(calculator "${CMAKE_CURRENT_BINARY_DIR}/app_main.cpp")
+target_link_libraries(calculator PRIVATE calculator_core)
 
-find_program(CLANG_FORMAT_EXE clang-format)
-get_target_property(target_sources calculator SOURCES)
-if(CLANG_FORMAT_EXE) 
-  add_custom_target(format 
-    COMMENT "Formatting files with clang-format..." 
-    COMMAND ${CLANG_FORMAT_EXE} -i ${target_sources} 
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-  ) 
-  message(STATUS "Added 'format' target") 
-else() 
-  message(WARNING
-    "clang-format not found - format target unavailable") 
-endif()
+target_include_directories(calculator PUBLIC
+    "${PROJECT_SOURCE_DIR}" 
+)
+
+target_link_libraries(calculator PRIVATE mathlib nlohmann_json spdlog)
+
+file(GLOB TEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.cpp")
+
+add_executable(calculator_tests ${TEST_SOURCES})
+
+target_include_directories(calculator_tests PUBLIC
+    "${PROJECT_SOURCE_DIR}"
+)
+
+target_link_libraries(calculator_tests PRIVATE
+    gtest
+    calculator_core
+)
+
+add_test(NAME calculator_tests COMMAND calculator_tests)
