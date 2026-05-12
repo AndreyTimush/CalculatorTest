@@ -7,6 +7,8 @@ enable_testing()
 
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER}")
 
+find_package(PostgreSQL REQUIRED)
+
 FetchContent_Declare(
 	mathlib
 	GIT_REPOSITORY https://github.com/AndreyTimush/headerOnlyMathLib.git
@@ -40,7 +42,8 @@ add_library(calculator_core OBJECT main.cpp
     src/logger.cpp
     src/parser.cpp
     src/printer.cpp
-    src/runner.cpp)
+    src/runner.cpp
+    src/database.cpp)
 target_compile_definitions(calculator_core PRIVATE main=calculator_entrypoint)
 target_include_directories(calculator_core PUBLIC
     "${PROJECT_SOURCE_DIR}/src"
@@ -59,7 +62,11 @@ target_include_directories(calculator PUBLIC
     "${PROJECT_SOURCE_DIR}" 
 )
 
-target_link_libraries(calculator PRIVATE mathlib nlohmann_json spdlog)
+target_include_directories(calculator PRIVATE
+    ${PostgreSQL_INCLUDE_DIRS}
+)
+
+target_link_libraries(calculator PRIVATE mathlib nlohmann_json spdlog PostgreSQL::PostgreSQL)
 
 file(GLOB TEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.cpp")
 
