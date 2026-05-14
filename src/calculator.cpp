@@ -1,6 +1,7 @@
 #include "calculator.h"
 #include "mathlib.h"
 #include "logger.h"
+#include "codeException.h"
 
 void Calculator::calculating(Data &data)
 {
@@ -37,8 +38,12 @@ void Calculator::calculating(Data &data)
 				logger.error("Error! Wrong operation!");
 				break;
 		}
-	} catch(const std::exception& e) {
-				throw;
+	} catch(const std::overflow_error& e) {
+		throw CodeException(1, "integer overflow");
+	} catch(const std::runtime_error& e) {
+		throw CodeException(3, "division by zero");
+	} catch(const CodeException& e) {
+		throw CodeException(e.code(), e.what());
 	}
 	data.setResult(res);
 }

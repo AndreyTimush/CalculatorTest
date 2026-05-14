@@ -43,7 +43,8 @@ add_library(calculator_core OBJECT main.cpp
     src/parser.cpp
     src/printer.cpp
     src/runner.cpp
-    src/database.cpp)
+    src/database.cpp
+    src/codeException.cpp)
 target_compile_definitions(calculator_core PRIVATE main=calculator_entrypoint)
 target_include_directories(calculator_core PUBLIC
     "${PROJECT_SOURCE_DIR}/src"

@@ -1,5 +1,6 @@
 #include "checker.h"
 #include "logger.h"
+#include "codeException.h"
 
 bool Checker::checkData(Data &data)
 {
@@ -17,7 +18,7 @@ bool Checker::checkData(Data &data)
 			return true;
 			break;
 		default:
-			throw std::runtime_error("Write correct operation");
+			throw CodeException(4, "write correct operation");
 			break;
 	}
 }

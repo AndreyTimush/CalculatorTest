@@ -1,4 +1,5 @@
 #include "runner.h"
+#include "codeException.h"
 
 Runner::Runner(): logger(Logger::getLogger()){}
 
@@ -53,7 +54,7 @@ void Runner::running(int argc, char *argv[])
 		checker.checkData(data);
 		calculator.calculating(data);
 		printer.printing(data);
-	} catch (std::runtime_error &err) {
+	} catch (const CodeException& err) {
 		throw;
 	}
 	
