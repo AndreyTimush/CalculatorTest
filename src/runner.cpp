@@ -46,6 +46,7 @@ Runner& Runner::operator=(Runner&& other) noexcept
 
 void Runner::running(int argc, char *argv[])
 {	
+	db.connectToDb();
 	logger.info("func running");
 	try {
 		parser.parsing(data, argc, argv);

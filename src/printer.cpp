@@ -1,9 +1,12 @@
 #include "printer.h"
 #include "logger.h"
+#include "database.h"
 
 void Printer::printing(Data &data)
 {
 	Logger &logger = Logger::getLogger();
+	Database &db = Database::getDb();
+	db.addRecord(data.getFirstArg(), data.getOperation(), data.getSecondArg(), data.getResult(), 0);
 	logger.info("func printing");
 	if (data.getOperation() != '!')
 		std::cout << data.getFirstArg() << " " << data.getOperation() << " " << data.getSecondArg() << " = " << data.getResult() << std::endl;

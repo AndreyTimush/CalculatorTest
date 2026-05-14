@@ -19,6 +19,6 @@ int main(int argc, char *argv[])
 		std::string msg = "Error! ";
 		Logger &logger = Logger::getLogger();
 		logger.error(msg + e.what());
-	}
+	} 
 	return 0;
 }

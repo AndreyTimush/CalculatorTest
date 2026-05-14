@@ -47,8 +47,9 @@ add_library(calculator_core OBJECT main.cpp
 target_compile_definitions(calculator_core PRIVATE main=calculator_entrypoint)
 target_include_directories(calculator_core PUBLIC
     "${PROJECT_SOURCE_DIR}/src"
+    ${PostgreSQL_INCLUDE_DIRS}
 )
-target_link_libraries(calculator_core PUBLIC mathlib nlohmann_json spdlog)
+target_link_libraries(calculator_core PUBLIC mathlib nlohmann_json spdlog PostgreSQL::PostgreSQL)
 
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/app_main.cpp"
 "int calculator_entrypoint(int argc, char** argv);\n"
@@ -61,12 +62,6 @@ target_link_libraries(calculator PRIVATE calculator_core)
 target_include_directories(calculator PUBLIC
     "${PROJECT_SOURCE_DIR}" 
 )
-
-target_include_directories(calculator PRIVATE
-    ${PostgreSQL_INCLUDE_DIRS}
-)
-
-target_link_libraries(calculator PRIVATE mathlib nlohmann_json spdlog PostgreSQL::PostgreSQL)
 
 file(GLOB TEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.cpp")
 

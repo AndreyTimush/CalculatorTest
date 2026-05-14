@@ -5,6 +5,7 @@
 #include "printer.h"
 #include "logger.h"
 #include "calculator.h"
+#include "database.h"
 
 class Runner
 {
@@ -13,6 +14,7 @@ class Runner
     Checker checker;
     Printer printer;
     Calculator calculator;
+    Database db;
     Logger &logger = Logger::getLogger();
     public:
         Runner();
