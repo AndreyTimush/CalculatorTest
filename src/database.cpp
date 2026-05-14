@@ -39,11 +39,11 @@ bool Database::createTable()
 
     if (PQresultStatus(createTableRes) != PGRES_COMMAND_OK) {
         logger.error(std::string("create table failed: ") + PQerrorMessage(conn));
-
         PQclear(createTableRes);
-
         return false;
     }
+
+    PQclear(createTableRes);
 
     logger.info("table was created");
     

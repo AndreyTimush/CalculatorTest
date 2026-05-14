@@ -14,7 +14,6 @@ class Runner
     Checker checker;
     Printer printer;
     Calculator calculator;
-    Database db;
     Logger &logger = Logger::getLogger();
     public:
         Runner();
