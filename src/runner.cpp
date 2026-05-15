@@ -1,5 +1,6 @@
 #include "runner.h"
 #include "codeException.h"
+#include "cache.h"
 
 Runner::Runner(): logger(Logger::getLogger()){}
 
@@ -47,7 +48,9 @@ Runner& Runner::operator=(Runner&& other) noexcept
 
 void Runner::running(int argc, char *argv[])
 {	
-	Database::getDb().connectToDb();
+	if (Database::getDb().connectToDb()) {
+		Database::getDb().loadCache();
+	}
 	logger.info("func running");
 	try {
 		parser.parsing(data, argc, argv);

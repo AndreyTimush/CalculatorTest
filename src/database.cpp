@@ -2,6 +2,7 @@
 #include "database.h"
 #include "logger.h"
 #include <libpq-fe.h>
+#include "cache.h"
 
 
 Database::Database() {
@@ -107,5 +108,37 @@ bool Database::addRecord(int firstNumber, char operation, int secondNumber, floa
 
     PQclear(execRes);
 
+    return true;
+}
+
+bool Database::loadCache() 
+{
+    logger.info("load_cahce function");
+    PGresult* res = PQexec(
+        conn,
+        "SELECT * FROM calculator;"
+    );
+
+    if (PQresultStatus(res) != PGRES_TUPLES_OK) {
+        PQclear(res);
+
+        return false;
+    }
+
+    int rows = PQntuples(res);
+    for (int i = 0; i < rows; i++) {
+        std::string firstVal = PQgetvalue(res, i, 1);
+        std::string operation = PQgetvalue(res, i, 2);
+        std::string secondVal = PQgetvalue(res, i, 3);
+        std::string result = PQgetvalue(res, i, 4);
+        std::string status = PQgetvalue(res, i, 5);
+
+        std::string keyForCache = Cache::getCache().makeKey(firstVal, operation, secondVal);
+
+        Cache::getCache().addRecordToCache(keyForCache, std::make_pair(result, status));
+
+    }
+
+    PQclear(res);
     return true;
 }

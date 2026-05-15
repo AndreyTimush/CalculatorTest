@@ -17,6 +17,7 @@ class Database
         }
         bool createTable(); 
         bool addRecord(int firstNumber, char operation, int secondNumber, float result, int status);
+        bool loadCache();
 
     
 };
