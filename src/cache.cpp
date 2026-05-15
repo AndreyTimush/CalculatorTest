@@ -17,7 +17,7 @@ std::string Cache::makeKey(std::string firstNumber, std::string operation, std::
 
 void Cache::addRecordToCache(std::string key, std::pair<std::string, std::string> resStat)
 {
-    cashMap[key] = resStat;
+    cacheMap[key] = resStat;
 }
 
 Cache& Cache::getCache() 
@@ -28,8 +28,8 @@ Cache& Cache::getCache()
 
 std::pair<std::string, std::string> Cache::findRec(std::string findRecord) 
 {
-    if (cashMap.find(findRecord) != cashMap.end()) {
-        return cashMap[findRecord];
+    if (cacheMap.find(findRecord) != cacheMap.end()) {
+        return cacheMap[findRecord];
     }
 
     return {"-1", "-1"};

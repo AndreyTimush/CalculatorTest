@@ -5,7 +5,7 @@
 
 class Cache
 {
-    std::unordered_map<std::string, std::pair<std::string, std::string>> cashMap;
+    std::unordered_map<std::string, std::pair<std::string, std::string>> cacheMap;
     public:
         static Cache& getCache();
         std::string makeKey(std::string firstNumber, std::string operation, std::string secondNumber);
