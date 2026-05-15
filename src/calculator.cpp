@@ -2,11 +2,30 @@
 #include "mathlib.h"
 #include "logger.h"
 #include "codeException.h"
+#include <string>
+#include "cache.h"
 
 void Calculator::calculating(Data &data)
 {
 	Logger &logger = Logger::getLogger();
 	logger.info("func calculating");
+	std::string firstArg = std::to_string(data.getFirstArg());
+	std::string operationArg(1, data.getOperation());
+	std::string secondArg = std::to_string(data.getSecondArg());
+	std::string keyForCache = "";
+	if (operationArg == "+" || operationArg == "*") {
+		std::string min = std::min(firstArg, secondArg);
+		std::string max = std::max(firstArg, secondArg);
+		keyForCache = min + operationArg + max;
+	} else {
+		keyForCache = firstArg + operationArg + secondArg;
+	}
+	
+	std::cout << "keyForCache = " << keyForCache << std::endl;
+
+	auto pair = Cache::getCache().findRec(keyForCache);
+
+
 	float res = 0;
 	try {
 		switch (data.getOperation()) {
