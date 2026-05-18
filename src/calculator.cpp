@@ -21,42 +21,44 @@ void Calculator::calculating(Data &data)
 		keyForCache = firstArg + operationArg + secondArg;
 	}
 	
-	std::cout << "keyForCache = " << keyForCache << std::endl;
-
 	auto pair = Cache::getCache().findRec(keyForCache);
-
-
 	float res = 0;
+
 	try {
-		switch (data.getOperation()) {
-			case '+': 
-				logger.info("func sum");
-				res = mathlib::sum(data.getFirstArg(), data.getSecondArg());
-				break;
-			case '-':
-				logger.info("func subtraction");
-				res = mathlib::subtraction(data.getFirstArg(), data.getSecondArg());
-				break;
-			case '*':
-				logger.info("func multiply");
-				res = mathlib::multiply(data.getFirstArg(), data.getSecondArg());
-				break;
-			case '/':
-				logger.info("func division");
-				res = mathlib::division(data.getFirstArg(), data.getSecondArg());
-				break;
-			case '^':
-				logger.info("func pow");
-				res = mathlib::pow(data.getFirstArg(), data.getSecondArg());
-				break;
-			case '!':
-				logger.info("func factorial");
-				res = mathlib::factorial(data.getFirstArg());
-				break;
-			default:
-				logger.error("Error! Wrong operation!");
-				break;
+		if (pair.first == "-1" && pair.second == "-1") {
+			switch (data.getOperation()) {
+				case '+': 
+					logger.info("func sum");
+					res = mathlib::sum(data.getFirstArg(), data.getSecondArg());
+					break;
+				case '-':
+					logger.info("func subtraction");
+					res = mathlib::subtraction(data.getFirstArg(), data.getSecondArg());
+					break;
+				case '*':
+					logger.info("func multiply");
+					res = mathlib::multiply(data.getFirstArg(), data.getSecondArg());
+					break;
+				case '/':
+					logger.info("func division");
+					res = mathlib::division(data.getFirstArg(), data.getSecondArg());
+					break;
+				case '^':
+					logger.info("func pow");
+					res = mathlib::pow(data.getFirstArg(), data.getSecondArg());
+					break;
+				case '!':
+					logger.info("func factorial");
+					res = mathlib::factorial(data.getFirstArg());
+					break;
+				default:
+					logger.error("Error! Wrong operation!");
+					break;
+			}
+		} else {
+			res = std::stof(pair.first);
 		}
+		
 	} catch(const std::overflow_error& e) {
 		throw CodeException(1, "integer overflow");
 	} catch(const std::runtime_error& e) {
