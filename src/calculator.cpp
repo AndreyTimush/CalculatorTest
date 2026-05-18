@@ -4,6 +4,7 @@
 #include "codeException.h"
 #include <string>
 #include "cache.h"
+#include "database.h"
 
 void Calculator::calculating(Data &data)
 {
@@ -55,8 +56,12 @@ void Calculator::calculating(Data &data)
 					logger.error("Error! Wrong operation!");
 					break;
 			}
+			data.setResult(res);
+			Database &db = Database::getDb();
+			db.addRecord(data.getFirstArg(), data.getOperation(), data.getSecondArg(), data.getResult(), 0);
 		} else {
 			res = std::stof(pair.first);
+			data.setResult(res);
 		}
 		
 	} catch(const std::overflow_error& e) {
@@ -66,5 +71,4 @@ void Calculator::calculating(Data &data)
 	} catch(const CodeException& e) {
 		throw CodeException(e.code(), e.what());
 	}
-	data.setResult(res);
 }
