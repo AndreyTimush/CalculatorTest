@@ -10,7 +10,6 @@ class Database
     using PgResPtr = std::unique_ptr<PGresult, decltype(&Database::deleterPGresult)>;
     const char* connInfo = "dbname=calculator user=andrey password=1111 host=localhost";
     PgConnPtr conn{nullptr, &Database::customDeleter};
-    PgResPtr res{nullptr, &Database::deleterPGresult};
     Logger &logger = Logger::getLogger();
     public:
         Database();
