@@ -5,9 +5,12 @@
 class Database 
 {
     static void customDeleter(PGconn* conn);
+    static void deleterPGresult(PGresult* exec);
     using PgConnPtr = std::unique_ptr<PGconn, decltype(&Database::customDeleter)>;
+    using PgResPtr = std::unique_ptr<PGresult, decltype(&Database::deleterPGresult)>;
     const char* connInfo = "dbname=calculator user=andrey password=1111 host=localhost";
     PgConnPtr conn{nullptr, &Database::customDeleter};
+    PgResPtr res{nullptr, &Database::deleterPGresult};
     Logger &logger = Logger::getLogger();
     public:
         Database();
