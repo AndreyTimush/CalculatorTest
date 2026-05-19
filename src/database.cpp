@@ -5,16 +5,28 @@
 #include "cache.h"
 
 
-Database::Database() {
-    conn = PQconnectdb(connInfo);
-};
+Database::Database()
+    : conn(PQconnectdb(connInfo), &Database::customDeleter)
+{
+}
+
+void Database::customDeleter(PGconn* conn)
+{
+    if (conn) {
+        PQfinish(conn);
+    }
+}
 
 bool Database::connectToDb()
 {
-    if (PQstatus(conn) != CONNECTION_OK) {
+    if (!conn || PQstatus(conn.get()) != CONNECTION_OK) {
         std::string msg = "Connection failed: ";
-        logger.error(msg + PQerrorMessage(conn));
-        PQfinish(conn);
+        if (conn) {
+            logger.error(msg + PQerrorMessage(conn.get()));
+        } else {
+            logger.error(msg);
+        }
+        conn.reset();
         return false;
     } 
     logger.info("connect to db");
@@ -27,7 +39,7 @@ bool Database::connectToDb()
 bool Database::createTable()
 {
     PGresult *createTableRes = PQexec(
-        conn,
+        conn.get(),
         "CREATE TABLE IF NOT EXISTS calculator ("
         "id SERIAL PRIMARY KEY,"
         "firstNumber INT,"
@@ -39,7 +51,7 @@ bool Database::createTable()
     );
 
     if (PQresultStatus(createTableRes) != PGRES_COMMAND_OK) {
-        logger.error(std::string("create table failed: ") + PQerrorMessage(conn));
+        logger.error(std::string("create table failed: ") + PQerrorMessage(conn.get()));
         PQclear(createTableRes);
         return false;
     }
@@ -54,7 +66,7 @@ bool Database::createTable()
 bool Database::addRecord(int firstNumber, char operation, int secondNumber, float result, int status) 
 {
     PGresult *prepareRes = PQprepare(
-        conn,
+        conn.get(),
         "insert_record",
         "INSERT INTO calculator"
         "(firstNumber, operation, secondNumber, result, status) "
@@ -64,7 +76,7 @@ bool Database::addRecord(int firstNumber, char operation, int secondNumber, floa
     );
 
     if (PQresultStatus(prepareRes) != PGRES_COMMAND_OK) {
-        logger.error(std::string("failed prepare: ") + PQerrorMessage(conn));
+        logger.error(std::string("failed prepare: ") + PQerrorMessage(conn.get()));
         PQclear(prepareRes);
 
         return false;
@@ -90,7 +102,7 @@ bool Database::addRecord(int firstNumber, char operation, int secondNumber, floa
     };
 
     PGresult *execRes = PQexecPrepared(
-        conn,
+        conn.get(),
         "insert_record",
         5,
         record,
@@ -101,7 +113,7 @@ bool Database::addRecord(int firstNumber, char operation, int secondNumber, floa
 
     if (PQresultStatus(execRes) != PGRES_COMMAND_OK)
     {
-        logger.error(std::string("insert failed: ") + PQerrorMessage(conn));
+        logger.error(std::string("insert failed: ") + PQerrorMessage(conn.get()));
         PQclear(execRes);
         return false;
     }
@@ -115,7 +127,7 @@ bool Database::loadCache()
 {
     logger.info("load_cahce function");
     PGresult* res = PQexec(
-        conn,
+        conn.get(),
         "SELECT * FROM calculator;"
     );
 
