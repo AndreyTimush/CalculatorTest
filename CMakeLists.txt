@@ -79,3 +79,18 @@ target_link_libraries(calculator_tests PRIVATE
 )
 
 add_test(NAME calculator_tests COMMAND calculator_tests)
+
+find_program(VALGRIND_EXE valgrind)
+
+if(VALGRIND_EXE)
+    add_test(
+        NAME valgrind_test
+        COMMAND ${VALGRIND_EXE}
+            --leak-check=full
+            --show-leak-kinds=all
+            --track-origins=yes
+            --errors-for-leak-kinds=definite,possible
+            --error-exitcode=1
+            ./calculator_tests
+    )
+endif()
