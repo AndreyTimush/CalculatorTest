@@ -5,6 +5,7 @@
 #include "printer.h"
 #include "logger.h"
 #include "calculator.h"
+#include "database.h"
 
 class Runner
 {

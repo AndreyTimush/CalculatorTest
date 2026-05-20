@@ -7,6 +7,8 @@ enable_testing()
 
 message(STATUS "Compiler: ${CMAKE_CXX_COMPILER}")
 
+find_package(PostgreSQL REQUIRED)
+
 FetchContent_Declare(
 	mathlib
 	GIT_REPOSITORY https://github.com/AndreyTimush/headerOnlyMathLib.git
@@ -40,12 +42,16 @@ add_library(calculator_core OBJECT main.cpp
     src/logger.cpp
     src/parser.cpp
     src/printer.cpp
-    src/runner.cpp)
+    src/runner.cpp
+    src/database.cpp
+    src/codeException.cpp
+    src/cache.cpp)
 target_compile_definitions(calculator_core PRIVATE main=calculator_entrypoint)
 target_include_directories(calculator_core PUBLIC
     "${PROJECT_SOURCE_DIR}/src"
+    ${PostgreSQL_INCLUDE_DIRS}
 )
-target_link_libraries(calculator_core PUBLIC mathlib nlohmann_json spdlog)
+target_link_libraries(calculator_core PUBLIC mathlib nlohmann_json spdlog PostgreSQL::PostgreSQL)
 
 file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/app_main.cpp"
 "int calculator_entrypoint(int argc, char** argv);\n"
@@ -58,8 +64,6 @@ target_link_libraries(calculator PRIVATE calculator_core)
 target_include_directories(calculator PUBLIC
     "${PROJECT_SOURCE_DIR}" 
 )
-
-target_link_libraries(calculator PRIVATE mathlib nlohmann_json spdlog)
 
 file(GLOB TEST_SOURCES "${PROJECT_SOURCE_DIR}/tests/*.cpp")
 
@@ -75,3 +79,18 @@ target_link_libraries(calculator_tests PRIVATE
 )
 
 add_test(NAME calculator_tests COMMAND calculator_tests)
+
+find_program(VALGRIND_EXE valgrind)
+
+if(VALGRIND_EXE)
+    add_test(
+        NAME valgrind_test
+        COMMAND ${VALGRIND_EXE}
+            --leak-check=full
+            --show-leak-kinds=all
+            --track-origins=yes
+            --errors-for-leak-kinds=definite,possible
+            --error-exitcode=1
+            ./calculator_tests
+    )
+endif()

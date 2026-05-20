@@ -5,6 +5,7 @@
 #include <nlohmann/json.hpp>
 #include <getopt.h>
 #include "printer.h"
+#include "codeException.h"
 
 using json = nlohmann::json;
 
@@ -45,7 +46,7 @@ void Parser::parsing(Data &data, int argc, char *argv[])
 		jsonArgs = json::parse(argv[1]);
 		firstArg = jsonArgs["firstArgument"].get<long long>();
 		if (firstArg > INT_MAX || firstArg < INT_MIN) {
-			throw std::runtime_error("integer overflow");
+			throw CodeException(1, "integer overflow");
 		} else {
 			data.setFirstArg(static_cast<int>(firstArg));
 		}
@@ -53,7 +54,7 @@ void Parser::parsing(Data &data, int argc, char *argv[])
 		
 		std::string str = jsonArgs["operation"];
 		if (str.length() != 1) {
-			throw std::runtime_error("wrong operation");
+			throw CodeException(2, "integer overflow");
 		} else {
 			operation = str[0];
 		}
@@ -62,16 +63,16 @@ void Parser::parsing(Data &data, int argc, char *argv[])
 		if (jsonArgs.contains("secondArgument")) {
 			secondArg = jsonArgs["secondArgument"].get<long long>();
 			if (secondArg > INT_MAX || secondArg < INT_MIN) {
-				throw std::runtime_error("integer overflow");
+				throw CodeException(1, "integer overflow");
 			} else {
 				data.setSecondArg(static_cast<int>(secondArg));
 			}
 		} else {
 			if (operation != '!') {
-				throw std::runtime_error("Write correct operation or add second argument");
+				throw CodeException(5, "Write correct operation or add second argument");
 			}
 		}
-	} catch (const json::exception& e) {
-		throw std::runtime_error(e.what());
+	} catch (const CodeException& e) {
+		throw CodeException(6, e.what());
 	}
 }
