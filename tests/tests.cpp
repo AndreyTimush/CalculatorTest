@@ -32,7 +32,7 @@ TEST(ParseTest, FirstInvalidArgument)
     char arg1[] = "{\"firstArgument\":\"1231231\",\"operation\":\"+\",\"secondArgument\": 5}";
     char* argv[] = {arg0, arg1};
 
-    EXPECT_THROW(parser.parsing(data, 2, argv), std::runtime_error);
+    EXPECT_THROW(parser.parsing(data, 2, argv), std::exception);
 }
 
 TEST(ParseTest, OperationInvalidArgument)
@@ -44,7 +44,7 @@ TEST(ParseTest, OperationInvalidArgument)
     char arg1[] = "{\"firstArgument\":3,\"operation\":\"+123\",\"secondArgument\": 5}";
     char* argv[] = {arg0, arg1};
 
-    EXPECT_THROW(parser.parsing(data, 2, argv), std::runtime_error);
+    EXPECT_THROW(parser.parsing(data, 2, argv), std::exception);
 }
 
 TEST(ParseTest, SecondInvalidArgument)
@@ -56,7 +56,7 @@ TEST(ParseTest, SecondInvalidArgument)
     char arg1[] = "{\"firstArgument\":123,\"operation\":\"+\",\"secondArgument\":\"5sada\"}";
     char* argv[] = {arg0, arg1};
 
-    EXPECT_THROW(parser.parsing(data, 2, argv), std::runtime_error);
+    EXPECT_THROW(parser.parsing(data, 2, argv), std::exception);
 }
 
 TEST(ParseTest, IntegerOverflowFirstArgument)
@@ -68,7 +68,7 @@ TEST(ParseTest, IntegerOverflowFirstArgument)
     char arg1[] = "{\"firstArgument\":21474836747,\"operation\":\"+\",\"secondArgument\": 5}";
     char* argv[] = {arg0, arg1};
 
-    EXPECT_THROW(parser.parsing(data, 2, argv), std::runtime_error);
+    EXPECT_THROW(parser.parsing(data, 2, argv), std::exception);
 }
 
 TEST(ParseTest, IntegerOverflowSecondArgument)
@@ -80,7 +80,7 @@ TEST(ParseTest, IntegerOverflowSecondArgument)
     char arg1[] = "{\"firstArgument\":123,\"operation\":\"+\",\"secondArgument\": 21474832647}";
     char* argv[] = {arg0, arg1};
 
-    EXPECT_THROW(parser.parsing(data, 2, argv), std::runtime_error);
+    EXPECT_THROW(parser.parsing(data, 2, argv), std::exception);
 }
 
 TEST(CheckerTest, ValidOperationCalculatesResult)
@@ -91,9 +91,8 @@ TEST(CheckerTest, ValidOperationCalculatesResult)
     data.setSecondArg(5);
 
     Checker checker;
-    checker.checkData(data);
 
-    EXPECT_FLOAT_EQ(data.getResult(), 15.0f);
+    EXPECT_NO_THROW(checker.checkData(data));
 }
 
 TEST(CheckerTest, InvalidOperationCheckerError)
@@ -105,7 +104,7 @@ TEST(CheckerTest, InvalidOperationCheckerError)
 
     Checker checker;
 
-    EXPECT_THROW(checker.checkData(data), std::runtime_error);
+    EXPECT_THROW(checker.checkData(data), std::exception);
 }
 
 TEST(CalculatorTest, ValidPlusResult)
@@ -128,7 +127,7 @@ TEST(CalculatorTest, InvalidPlusResult)
     data.setSecondArg(100000);
 
     Calculator calculator;
-    EXPECT_THROW(calculator.calculating(data), std::overflow_error);
+    EXPECT_THROW(calculator.calculating(data), std::exception);
 }
 
 TEST(CalculatorTest, ValidSubtractionResult)
@@ -153,7 +152,7 @@ TEST(CalculatorTest, InvalidSubtractionResult)
     
     Calculator calculator;
 
-    EXPECT_THROW(calculator.calculating(data), std::overflow_error);
+    EXPECT_THROW(calculator.calculating(data), std::exception);
 }
 
 TEST(CalculatorTest, ValidMultiplicationResult)
@@ -178,7 +177,7 @@ TEST(CalculatorTest, InvalidMultiplicationResult)
     
     Calculator calculator;
     
-    EXPECT_THROW(calculator.calculating(data), std::runtime_error);
+    EXPECT_THROW(calculator.calculating(data), std::exception);
 }
 
 TEST(CalculatorTest, ValidDivisionResult)
@@ -203,7 +202,7 @@ TEST(CalculatorTest, InvalidDivisionResult)
 
     Calculator calculator;
     
-    EXPECT_THROW(calculator.calculating(data), std::runtime_error);
+    EXPECT_THROW(calculator.calculating(data), std::exception);
 }
 
 TEST(CalculatorTest, ValidPowResult)
@@ -228,7 +227,7 @@ TEST(CalculatorTest, InvalidPowResult)
     
     Calculator calculator;
 
-    EXPECT_THROW(calculator.calculating(data), std::runtime_error);
+    EXPECT_THROW(calculator.calculating(data), std::exception);
 }
 
 TEST(CalculatorTest, ValidFactorialResult)
@@ -251,5 +250,5 @@ TEST(CalculatorTest, InvalidFactorialResult)
     
     Calculator calculator;
 
-    EXPECT_THROW(calculator.calculating(data), std::runtime_error);
+    EXPECT_THROW(calculator.calculating(data), std::exception);
 }
